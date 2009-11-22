@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="betFairService"
+		class="dk.bot.betfairservice.BetFairServiceImpl">
+		<property name="exchangeWebService" ref="exchangeWebService" />
+		<property name="globalWebService" ref="globalWebService" />
+	</bean>
+	
+	<!-- BetFair web services -->
+	<bean id="proxyFactoryGlobalWebService"
+		class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+		<property name="serviceClass"
+			value="com.betfair.publicapi.v3.bfglobalservice.BFGlobalService" />
+		<property name="address"
+			value="https://api.betfair.com/global/v3/BFGlobalService" />
+	</bean>
+	<bean id="globalWebService"
+		class="com.betfair.publicapi.v3.bfglobalservice.BFGlobalService"
+		factory-bean="proxyFactoryGlobalWebService" factory-method="create" />
+
+	<bean id="proxyFactoryExchangeWebService"
+		class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+		<property name="serviceClass"
+			value="com.betfair.publicapi.v5.bfexchangeservice.BFExchangeService" />
+		<property name="address"
+			value="https://api.betfair.com/exchange/v5/BFExchangeService" />
+	</bean>
+	<bean id="exchangeWebService"
+		class="com.betfair.publicapi.v5.bfexchangeservice.BFExchangeService"
+		factory-bean="proxyFactoryExchangeWebService" factory-method="create" />
+</beans>
