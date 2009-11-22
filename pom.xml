@@ -12,9 +12,9 @@
 
 	<distributionManagement>
 		<repository>
-			<id>maven-config-processor-plugin-repo-releases</id>
+			<id>betfair-api-repo-releases</id>
 			<name>
-				Maven Repository for Config Processor Plugin (releases)
+				Maven Repository for Betfair JAVA API (releases)
 			</name>
 			<url>
 				svn:https://betfair-api.googlecode.com/svn/maven-repo/releases
@@ -22,9 +22,9 @@
 			<uniqueVersion>false</uniqueVersion>
 		</repository>
 		<snapshotRepository>
-			<id>maven-config-processor-plugin-repo-releases</id>
+			<id>betfair-api-repo-releases</id>
 			<name>
-				Maven Repository for Config Processor Plugin (snapshots)
+				Maven Repository for Betfair JAVA API (snapshots)
 			</name>
 			<url>
 				svn:https://betfair-api.googlecode.com/svn/maven-repo/snapshots
