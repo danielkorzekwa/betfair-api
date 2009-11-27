@@ -78,6 +78,11 @@ public class BetFairServiceImplIntegrationTest {
 		BFMarketDetails marketDetails = betFairService.getMarketDetails(horseRaceRunners.getMarketId());
 		assertEquals(true,marketDetails.getRunners().size()>0);
 	}
+	
+	@Test
+	public void testGetMarketTradedVolume() {
+		//fail("Not implemeted yet");
+	}
 
 	@Test
 	public void testGetAccountStatement() throws BetFairException {
