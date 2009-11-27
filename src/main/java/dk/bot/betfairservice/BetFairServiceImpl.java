@@ -1,5 +1,6 @@
 package dk.bot.betfairservice;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,7 @@ import dk.bot.betfairservice.model.BFMUBet;
 import dk.bot.betfairservice.model.BFMarketData;
 import dk.bot.betfairservice.model.BFMarketDetails;
 import dk.bot.betfairservice.model.BFMarketRunners;
+import dk.bot.betfairservice.model.BFMarketTradedVolume;
 import dk.bot.betfairservice.model.BFSPBetPlaceResult;
 import dk.bot.betfairservice.model.LoginResponse;
 import dk.bot.betfairservice.state.BetFairState;
@@ -169,6 +171,11 @@ public class BetFairServiceImpl implements BetFairService {
 		GetMarketDetailsCommand command = new GetMarketDetailsCommand(marketId);
 		execute(command, 1);
 		return command.getMarketDetails();
+	}
+	
+	@Override
+	public BFMarketTradedVolume getMarketTradedVolume(int marketId) {
+		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 
 	public BFBetCancelResult cancelBet(long betId) throws BetFairException {

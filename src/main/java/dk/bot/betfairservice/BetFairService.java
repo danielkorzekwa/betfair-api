@@ -7,6 +7,8 @@ import java.util.Set;
 import com.betfair.publicapi.types.exchange.v5.GetAccountFundsResp;
 import com.betfair.publicapi.types.global.v3.EventType;
 
+import dk.bot.betfairservice.BetFairException;
+import dk.bot.betfairservice.BetFairServiceInfo;
 import dk.bot.betfairservice.model.BFAccountStatementItem;
 import dk.bot.betfairservice.model.BFBetCancelResult;
 import dk.bot.betfairservice.model.BFBetPlaceResult;
@@ -16,6 +18,7 @@ import dk.bot.betfairservice.model.BFMUBet;
 import dk.bot.betfairservice.model.BFMarketData;
 import dk.bot.betfairservice.model.BFMarketDetails;
 import dk.bot.betfairservice.model.BFMarketRunners;
+import dk.bot.betfairservice.model.BFMarketTradedVolume;
 import dk.bot.betfairservice.model.BFSPBetPlaceResult;
 import dk.bot.betfairservice.model.LoginResponse;
 
@@ -70,6 +73,14 @@ public interface BetFairService {
 
 	public BFMarketDetails getMarketDetails(int marketId) throws BetFairException;
 
+	/** Returns traded volume at each price on all of the runners in a particular market.
+	 * 
+	 * @author korzekwad
+	 *
+	 */
+	public BFMarketTradedVolume getMarketTradedVolume(int marketId);
+	
+	
 	public BFBetCancelResult cancelBet(long betId) throws BetFairException;
 
 	/**
@@ -111,5 +122,7 @@ public interface BetFairService {
 	
 	/** Returns BetFairService usage statistics. */
 	public BetFairServiceInfo getBetFairServiceInfo();
+	
+	
 
 }
