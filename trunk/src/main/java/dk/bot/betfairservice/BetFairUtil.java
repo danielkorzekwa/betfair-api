@@ -246,6 +246,21 @@ public class BetFairUtil {
 			throw new IllegalArgumentException("Price range list is empty.");
 		}
 	}
+
+	public static List<Double> getAllPricesForPriceRanges(List<PriceRange> priceRanges) {
+		
+		List<Double> prices = new ArrayList<Double>();
+		
+		double lastPrice = -1;
+		double currentPrice = 0;
+		while (currentPrice > lastPrice) {
+			lastPrice = currentPrice;
+			currentPrice = BetFairUtil.validatePrice(priceRanges, lastPrice+0.01, BetFairUtil.ROUND_UP);
+			prices.add(currentPrice);
+		}
+		
+		return prices;
+	}
 	
 	/**List of valid BetFair bet prices*/
 	public static List<PriceRange> getPriceRanges() {
