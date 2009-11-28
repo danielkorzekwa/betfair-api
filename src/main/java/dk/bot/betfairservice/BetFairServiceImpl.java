@@ -23,6 +23,7 @@ import dk.bot.betfairservice.command.GetEventTypesCommand;
 import dk.bot.betfairservice.command.GetMUBetsCommand;
 import dk.bot.betfairservice.command.GetMarketDetailsCommand;
 import dk.bot.betfairservice.command.GetMarketRunnersCommand;
+import dk.bot.betfairservice.command.GetMarketTradedVolumeCommand;
 import dk.bot.betfairservice.command.GetMarketsCommand;
 import dk.bot.betfairservice.command.PlaceBetCommand;
 import dk.bot.betfairservice.command.PlaceSPBetCommand;
@@ -175,7 +176,9 @@ public class BetFairServiceImpl implements BetFairService {
 	
 	@Override
 	public BFMarketTradedVolume getMarketTradedVolume(int marketId) {
-		throw new UnsupportedOperationException("Not implemented yet.");
+		GetMarketTradedVolumeCommand command = new GetMarketTradedVolumeCommand(marketId);
+		execute(command, 1);
+		return command.getMarketTradedVolume();
 	}
 
 	public BFBetCancelResult cancelBet(long betId) throws BetFairException {

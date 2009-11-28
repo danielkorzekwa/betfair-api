@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +24,9 @@ import dk.bot.betfairservice.model.BFMUBet;
 import dk.bot.betfairservice.model.BFMarketData;
 import dk.bot.betfairservice.model.BFMarketDetails;
 import dk.bot.betfairservice.model.BFMarketRunners;
+import dk.bot.betfairservice.model.BFMarketTradedVolume;
+import dk.bot.betfairservice.model.BFPriceTradedVolume;
+import dk.bot.betfairservice.model.BFRunnerTradedVolume;
 import dk.bot.betfairservice.model.BFSPBetPlaceResult;
 
 public class BetFairServiceImplIntegrationTest {
@@ -71,7 +73,7 @@ public class BetFairServiceImplIntegrationTest {
 	
 	@Test
 	public void testGetMarketDetails() {
-		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners();
+		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners(true);
 		if(horseRaceRunners ==null) {
 			fail("Can't run test - market not found");
 		}
@@ -81,7 +83,27 @@ public class BetFairServiceImplIntegrationTest {
 	
 	@Test
 	public void testGetMarketTradedVolume() {
-		//fail("Not implemeted yet");
+		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners(true);
+		if(horseRaceRunners ==null) {
+			fail("Can't run test - market not found");
+		}
+		BFMarketTradedVolume marketTradedVolume = betFairService.getMarketTradedVolume(horseRaceRunners.getMarketId());
+		
+		assertEquals(horseRaceRunners.getMarketId(), marketTradedVolume.getMarketId());
+		assertTrue("No runners on a market",marketTradedVolume.getRunnerTradedVolume().size()>0);
+		
+		double totalTradedVolume=0;
+		for(BFRunnerTradedVolume runnerTradedVolume: marketTradedVolume.getRunnerTradedVolume()) {
+			assertTrue("SelectionId should be bigger than 0.",runnerTradedVolume.getSelectionId()>0);
+			for(BFPriceTradedVolume priceTradedVolume: runnerTradedVolume.getPriceTradedVolume()) {
+				assertTrue("Price must be >=1.01 and <=1000",priceTradedVolume.getPrice()>1.01 && priceTradedVolume.getPrice()<=1000);
+				assertTrue("Traded volume must be >=0",priceTradedVolume.getTradedVolume()>=0);
+				totalTradedVolume+=priceTradedVolume.getTradedVolume();
+			}
+		}
+		
+		assertTrue("Total traded volume for market is 0", totalTradedVolume>0);
+		
 	}
 
 	@Test
@@ -108,7 +130,7 @@ public class BetFairServiceImplIntegrationTest {
 	@Test
 	public void testGetMarketRunners() {
 
-		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners();
+		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners(true);
 		if (horseRaceRunners == null) {
 			fail("No market found, so can't get market runners");
 		}
@@ -119,7 +141,7 @@ public class BetFairServiceImplIntegrationTest {
 	@Test
 	public void testPlaceBetLayOnExchange() {
 		/** Get market to place bet on */
-		BFMarketRunners runners = getSPHorseRaceRunners();
+		BFMarketRunners runners = getSPHorseRaceRunners(true);
 
 		int marketId = runners.getMarketId();
 		int selectionId = runners.getMarketRunners().get(0).getSelectionId();
@@ -134,7 +156,7 @@ public class BetFairServiceImplIntegrationTest {
 	@Test
 	public void testPlaceBetSPBackLoC() {
 		/** Get market to place bet on */
-		BFMarketRunners runners = getSPHorseRaceRunners();
+		BFMarketRunners runners = getSPHorseRaceRunners(true);
 
 		int marketId = runners.getMarketId();
 		int selectionId = runners.getMarketRunners().get(0).getSelectionId();
@@ -147,14 +169,14 @@ public class BetFairServiceImplIntegrationTest {
 	 * 
 	 * @return null if not market found
 	 */
-	private BFMarketRunners getSPHorseRaceRunners() {
+	private BFMarketRunners getSPHorseRaceRunners(boolean turningInPlay) {
 		long now = System.currentTimeMillis();
 
 		List<BFMarketData> markets = betFairService.getMarkets(new Date(now + 1000l * 3600l), new Date(now + 1000l
 				* 3600l * 24l * 7l), new HashSet<Integer>());
 
 		for (BFMarketData market : markets) {
-			if (market.isBsbMarket()) {
+			if (market.isBsbMarket() && market.isTurningInPlay()==turningInPlay) {
 				BFMarketRunners marketRunners = betFairService.getMarketRunners(market.getMarketId());
 				return marketRunners;
 			}
@@ -181,7 +203,7 @@ public class BetFairServiceImplIntegrationTest {
 	@Test
 	public void testGetMUBetsCheckSPBet() {
 		/** Get market to place bet on */
-		BFMarketRunners runners = getSPHorseRaceRunners();
+		BFMarketRunners runners = getSPHorseRaceRunners(true);
 
 		int marketId = runners.getMarketId();
 		int selectionId = runners.getMarketRunners().get(0).getSelectionId();
