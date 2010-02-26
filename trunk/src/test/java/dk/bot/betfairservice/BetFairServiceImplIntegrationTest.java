@@ -35,6 +35,8 @@ public class BetFairServiceImplIntegrationTest {
 
 	@BeforeClass
 	public static void setUp() throws BetFairException {
+		System.setProperty("bfProductId", "82");
+		
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "betfairbeans.xml" });
 		betFairService = (BetFairServiceImpl) context.getBean("betFairService");
 		betFairService.login();
@@ -59,64 +61,69 @@ public class BetFairServiceImplIntegrationTest {
 				new HashSet<Integer>());
 
 		assertEquals(true, markets.size() > 0);
-	
-		int count=0;
+
+		int count = 0;
 		for (BFMarketData market : markets) {
-			if (market.getEventHierarchy().startsWith("/1/") && market.getMarketType().equals("O") && market.getMarketName().endsWith("Match Odds")) {
-				System.out.println(market.getMenuPath() + ":" + market.getEventHierarchy() + ":" + market.getEventDate() + ":"
-						+ market.getMarketName() + ":" + market.getMarketType() + ":" + market.getTotalAmountMatched());
+			if (market.getEventHierarchy().startsWith("/1/") && market.getMarketType().equals("O")
+					&& market.getMarketName().endsWith("Match Odds")) {
+				System.out.println(market.getMenuPath() + ":" + market.getEventHierarchy() + ":"
+						+ market.getEventDate() + ":" + market.getMarketName() + ":" + market.getMarketType() + ":"
+						+ market.getTotalAmountMatched());
 				count++;
 			}
 		}
 		System.out.println("Total: " + count);
 	}
-	
+
 	@Test
 	public void testGetMarketDetails() {
 		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners(true);
-		if(horseRaceRunners ==null) {
+		if (horseRaceRunners == null) {
 			fail("Can't run test - market not found");
 		}
 		BFMarketDetails marketDetails = betFairService.getMarketDetails(horseRaceRunners.getMarketId());
-		assertEquals(true,marketDetails.getRunners().size()>0);
+		assertEquals(true, marketDetails.getRunners().size() > 0);
 	}
-	
+
 	@Test
 	public void testGetMarketTradedVolume() {
 		BFMarketRunners horseRaceRunners = getSPHorseRaceRunners(true);
-		if(horseRaceRunners ==null) {
+		if (horseRaceRunners == null) {
 			fail("Can't run test - market not found");
 		}
 		BFMarketTradedVolume marketTradedVolume = betFairService.getMarketTradedVolume(horseRaceRunners.getMarketId());
-		
+
 		assertEquals(horseRaceRunners.getMarketId(), marketTradedVolume.getMarketId());
-		assertTrue("No runners on a market",marketTradedVolume.getRunnerTradedVolume().size()>0);
-		
-		double totalTradedVolume=0;
-		for(BFRunnerTradedVolume runnerTradedVolume: marketTradedVolume.getRunnerTradedVolume()) {
-			assertTrue("SelectionId should be bigger than 0.",runnerTradedVolume.getSelectionId()>0);
-			for(BFPriceTradedVolume priceTradedVolume: runnerTradedVolume.getPriceTradedVolume()) {
-				assertTrue("Price must be >=1.01 and <=1000",priceTradedVolume.getPrice()>1.01 && priceTradedVolume.getPrice()<=1000);
-				assertTrue("Traded volume must be >=0",priceTradedVolume.getTradedVolume()>=0);
-				totalTradedVolume+=priceTradedVolume.getTradedVolume();
+		assertTrue("No runners on a market", marketTradedVolume.getRunnerTradedVolume().size() > 0);
+
+		double totalTradedVolume = 0;
+		for (BFRunnerTradedVolume runnerTradedVolume : marketTradedVolume.getRunnerTradedVolume()) {
+			assertTrue("SelectionId should be bigger than 0.", runnerTradedVolume.getSelectionId() > 0);
+			for (BFPriceTradedVolume priceTradedVolume : runnerTradedVolume.getPriceTradedVolume()) {
+				assertTrue("Price must be >=1.01 and <=1000", priceTradedVolume.getPrice() > 1.01
+						&& priceTradedVolume.getPrice() <= 1000);
+				assertTrue("Traded volume must be >=0", priceTradedVolume.getTradedVolume() >= 0);
+				totalTradedVolume += priceTradedVolume.getTradedVolume();
 			}
 		}
-		
-		assertTrue("Total traded volume for market is 0", totalTradedVolume>0);
-		
+
+		assertTrue("Total traded volume for market is 0", totalTradedVolume > 0);
+
 	}
 
 	@Test
 	public void testGetAccountStatement() throws BetFairException {
 
-		List<BFAccountStatementItem> statementItems = betFairService.getAccountStatement(new Date(System.currentTimeMillis()
+		List<BFAccountStatementItem> statementItems = betFairService.getAccountStatement(new Date(System
+				.currentTimeMillis()
 				- (long) 1000 * 3600 * 24 * 1), new Date(System.currentTimeMillis()), Integer.MAX_VALUE);
 
 		System.out.println("\nAccount items: " + statementItems.size());
 		for (BFAccountStatementItem item : statementItems) {
-			assertTrue(item.getMarketId() > 0);
-			assertTrue(item.getSelectionId() > 0);
-			assertTrue(item.getBetId() > 0);
+			if (item.getMarketId() > 0) {
+				assertTrue(item.getSelectionId() > 0);
+				assertTrue(item.getBetId() > 0);
+			}
 		}
 	}
 
@@ -145,7 +152,7 @@ public class BetFairServiceImplIntegrationTest {
 
 		int marketId = runners.getMarketId();
 		int selectionId = runners.getMarketRunners().get(0).getSelectionId();
-		BFBetPlaceResult betPlaceResult = betFairService.placeBet(marketId, selectionId, BFBetType.L, 1.01, 2,true);
+		BFBetPlaceResult betPlaceResult = betFairService.placeBet(marketId, selectionId, BFBetType.L, 1.01, 2, true);
 
 		assertTrue("PlaceBet error: betId=" + betPlaceResult.getBetId(), betPlaceResult.getBetId() > 0);
 
@@ -165,7 +172,8 @@ public class BetFairServiceImplIntegrationTest {
 		assertTrue("PlaceSPBet error: betId=" + betPlaceResult.getBetId(), betPlaceResult.getBetId() > 0);
 	}
 
-	/** Get horse race market which supports SB bets
+	/**
+	 * Get horse race market which supports SB bets
 	 * 
 	 * @return null if not market found
 	 */
@@ -176,7 +184,7 @@ public class BetFairServiceImplIntegrationTest {
 				* 3600l * 24l * 7l), new HashSet<Integer>());
 
 		for (BFMarketData market : markets) {
-			if (market.isBsbMarket() && market.isTurningInPlay()==turningInPlay) {
+			if (market.isBsbMarket() && market.isTurningInPlay() == turningInPlay) {
 				BFMarketRunners marketRunners = betFairService.getMarketRunners(market.getMarketId());
 				return marketRunners;
 			}
@@ -185,21 +193,21 @@ public class BetFairServiceImplIntegrationTest {
 		return null; // no market found
 
 	}
-	
+
 	@Test
 	public void testGetMUBets() {
 		betFairService.getMUBets(BFBetStatus.MU);
 	}
-	
+
 	@Test
 	public void testGetMUBetsForMarketId() {
 		long now = System.currentTimeMillis();
 		List<BFMarketData> markets = betFairService.getMarkets(new Date(now + 1000l * 3600l), new Date(now + 1000l
 				* 3600l * 24l * 7l), new HashSet<Integer>());
-		
-		betFairService.getMUBets(BFBetStatus.MU,markets.get(0).getMarketId());
+
+		betFairService.getMUBets(BFBetStatus.MU, markets.get(0).getMarketId());
 	}
-	
+
 	@Test
 	public void testGetMUBetsCheckSPBet() {
 		/** Get market to place bet on */
@@ -210,13 +218,13 @@ public class BetFairServiceImplIntegrationTest {
 		BFSPBetPlaceResult betPlaceResult = betFairService.placeSPBet(marketId, selectionId, BFBetType.B, 2, 1000d);
 
 		assertTrue("PlaceSPBet error: betId=" + betPlaceResult.getBetId(), betPlaceResult.getBetId() > 0);
-	
+
 		List<BFMUBet> bets = betFairService.getMUBets(BFBetStatus.MU);
-		for(BFMUBet bet: bets) {
-			if(bet.getBetId() == betPlaceResult.getBetId()) {
+		for (BFMUBet bet : bets) {
+			if (bet.getBetId() == betPlaceResult.getBetId()) {
 				assertEquals(BFBetCategoryType.L, bet.getBetCategoryType());
-				assertEquals(2, bet.getBspLiability(),0);
-				assertEquals(1000, bet.getPrice(),0);
+				assertEquals(2, bet.getBspLiability(), 0);
+				assertEquals(1000, bet.getPrice(), 0);
 				return;
 			}
 		}

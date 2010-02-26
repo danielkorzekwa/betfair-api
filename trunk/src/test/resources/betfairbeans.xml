@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<context:property-placeholder />
 	
 	<bean id="betFairService"
 		class="dk.bot.betfairservice.DefaultBetFairServiceFactoryBean" init-method="login">
-		<property name="user" value="xxx"/>
-		<property name="password" value="xxx"/>
-		<property name="productId" value="xxx"/>
+		<property name="user" value="${bfUser}"/>
+		<property name="password" value="${bfPassword}"/>
+		<property name="productId" value="${bfProductId}"/>
 	</bean>
 </beans>
