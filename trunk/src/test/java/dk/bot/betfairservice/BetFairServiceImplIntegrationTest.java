@@ -1,6 +1,6 @@
 package dk.bot.betfairservice;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -82,7 +82,11 @@ public class BetFairServiceImplIntegrationTest {
 			fail("Can't run test - market not found");
 		}
 		BFMarketDetails marketDetails = betFairService.getMarketDetails(horseRaceRunners.getMarketId());
+		
 		assertEquals(true, marketDetails.getRunners().size() > 0);
+		assertTrue("Market id is not bigger than 0",marketDetails.getMarketId()>0);
+		assertNotNull(marketDetails.getMarketName());
+		assertTrue("NumOfWinners is not bigger than 0",marketDetails.getNumOfWinners()>0);
 	}
 
 	@Test

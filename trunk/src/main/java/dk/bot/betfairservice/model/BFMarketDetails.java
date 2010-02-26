@@ -8,16 +8,20 @@ import java.util.List;
 public class BFMarketDetails implements Serializable {
 
 	private final int marketId;
+	private final String marketName;
 	private final Date marketTime;
 	private final Date suspendTime;
 	private final String menuPath;
+	private final int numOfWinners;
 	private final List<BFMarketDetailsRunner> runners;
 	
-	public BFMarketDetails(int marketId,String menuPath,Date marketTime, Date marketSuspendTime, List<BFMarketDetailsRunner> marketRunners) {
+	public BFMarketDetails(int marketId,String marketName,String menuPath,Date marketTime, Date marketSuspendTime, int numOfWinners,List<BFMarketDetailsRunner> marketRunners) {
 		this.marketId=marketId;
+		this.marketName=marketName;
 		this.menuPath=menuPath;
 		this.marketTime=marketTime;
 		this.suspendTime=marketSuspendTime;
+		this.numOfWinners=numOfWinners;
 		this.runners = marketRunners;
 	}
 	
@@ -41,20 +45,21 @@ public class BFMarketDetails implements Serializable {
 		return runners;
 	}
 	
+	public String getMarketName() {
+		return marketName;
+	}
+
+	public int getNumOfWinners() {
+		return numOfWinners;
+	}
+
 	@Override
 	public String toString() {
-		StringBuffer text = new StringBuffer();
-
-		for (int i = 0; i < runners.size(); i++) {
-			text.append(runners.get(i).getSelectionName());
-			if (i < runners.size() - 1) {
-				text.append(":");
-			}
-		}
-
-		return text.toString();
+		return "BFMarketDetails [marketId=" + marketId + ", marketName=" + marketName + ", marketTime=" + marketTime
+				+ ", menuPath=" + menuPath + ", numOfWinners=" + numOfWinners + ", runners=" + runners
+				+ ", suspendTime=" + suspendTime + "]";
 	}
-	
+
 	/**
 	 * 
 	 * @param selectionId
