@@ -20,4 +20,9 @@ public class BFMarketDetailsRunner implements Serializable {
 		return selectionName;
 	}
 
+	@Override
+	public String toString() {
+		return "BFMarketDetailsRunner [selectionId=" + selectionId + ", selectionName=" + selectionName + "]";
+	}
+
 }

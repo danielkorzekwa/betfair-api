@@ -64,7 +64,7 @@ public class GetMarketDetailsCommand implements BFCommand {
 				marketRunners.add(new BFMarketDetailsRunner(runner.getSelectionId(),runner.getName()));
 			}
 			
-			return new BFMarketDetails(market.getMarketId(),market.getMenuPath(),market.getMarketTime().toGregorianCalendar().getTime(),market.getMarketSuspendTime().toGregorianCalendar().getTime(),marketRunners);		
+			return new BFMarketDetails(market.getMarketId(),market.getName(),market.getMenuPath(),market.getMarketTime().toGregorianCalendar().getTime(),market.getMarketSuspendTime().toGregorianCalendar().getTime(),market.getNumberOfWinners(),marketRunners);		
 		}
 		else {
 			throw new BetFairException("getMarketDetails: " + resp.getErrorCode().name());
