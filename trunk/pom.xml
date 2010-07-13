@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.flexibet</groupId>
 	<artifactId>flexibet-betfair</artifactId>
-	<version>0.5-SNAPSHOT</version>
+	<version>0.5</version>
 	<packaging>jar</packaging>
 	<name>flexibet-betfair</name>
 
 	<scm>
-		<connection>scm:svn:http://betfair-api.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://betfair-api.googlecode.com/svn/trunk</developerConnection>
-		<url>http://code.google.com/p/betfair-api</url>
+		<connection>scm:svn:http://betfair-api.googlecode.com/svn/tags/flexibet-betfair-0.5</connection>
+		<developerConnection>scm:svn:https://betfair-api.googlecode.com/svn/tags/flexibet-betfair-0.5</developerConnection>
+		<url>http://code.google.com/p/betfair-api/tags/flexibet-betfair-0.5</url>
 	</scm>
 
 	<distributionManagement>
