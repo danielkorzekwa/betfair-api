@@ -71,6 +71,17 @@ public interface BetFairService {
 	 */
 	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId);
 
+	/**
+	 * Returns bets since given time for a given market
+	 * 
+	 * @param betStatus
+	 * @param marketId
+	 * @param matchedSince
+	 * @return
+	 * @throws BetFairException
+	 */
+	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId, Date matchedSince);
+	
 	public BFMarketDetails getMarketDetails(int marketId) throws BetFairException;
 
 	/** Returns traded volume at each price on all of the runners in a particular market.

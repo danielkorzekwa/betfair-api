@@ -111,7 +111,7 @@ public class BetFairServiceImplIntegrationTest {
 			}
 		}
 
-		assertTrue("Total traded volume for market is 0", totalTradedVolume > 0);
+		assertTrue("Total traded volume for market is less than 0", totalTradedVolume >= 0);
 
 	}
 
@@ -210,6 +210,17 @@ public class BetFairServiceImplIntegrationTest {
 				* 3600l * 24l * 7l), new HashSet<Integer>());
 
 		betFairService.getMUBets(BFBetStatus.MU, markets.get(0).getMarketId());
+	}
+	
+	@Test
+	public void testGetMUBetsForMarketIdAndMatchedSince() {
+		long now = System.currentTimeMillis();
+		List<BFMarketData> markets = betFairService.getMarkets(new Date(now + 1000l * 3600l), new Date(now + 1000l
+				* 3600l * 24l * 7l), new HashSet<Integer>());
+
+		int marketId = markets.get(0).getMarketId();
+		List<BFMUBet> muBets = betFairService.getMUBets(BFBetStatus.M, marketId,new Date(now-(1000*3600)));
+		System.out.println("Bets matched for market=" + marketId + ",since date:" + muBets);
 	}
 
 	@Test

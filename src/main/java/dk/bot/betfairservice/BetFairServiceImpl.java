@@ -153,7 +153,7 @@ public class BetFairServiceImpl implements BetFairService {
 
 	public List<BFMUBet> getMUBets(BFBetStatus betStatus) throws BetFairException {
 
-		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,null);
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,null,null);
 		execute(command, 5);
 		return command.getMUBets();
 
@@ -161,10 +161,25 @@ public class BetFairServiceImpl implements BetFairService {
 	
 	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId) throws BetFairException {
 
-		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,marketId);
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,marketId,null);
 		execute(command, 1);
 		return command.getMUBets();
 
+	}
+	
+	/**
+	 * Returns bets since given time for a given market
+	 * 
+	 * @param betStatus
+	 * @param marketId
+	 * @param matchedSince
+	 * @return
+	 * @throws BetFairException
+	 */
+	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId, Date matchedSince) {
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,marketId,matchedSince);
+		execute(command, 1);
+		return command.getMUBets();
 	}
 
 	public BFMarketDetails getMarketDetails(int marketId) throws BetFairException {

@@ -114,6 +114,16 @@ public class BFMUBet implements Serializable,Comparable<BFMUBet>{
 			}
 			
 		}
+		@Override
+		public String toString() {
+			return "BFMUBet [betCategoryType=" + betCategoryType + ", betId=" + betId
+					+ ", betStatus=" + betStatus + ", betType=" + betType
+					+ ", bspLiability=" + bspLiability + ", marketId=" + marketId
+					+ ", matchedDate=" + matchedDate + ", placedDate=" + placedDate
+					+ ", price=" + price + ", selectionId=" + selectionId + ", size="
+					+ size + "]";
+		}
+		
 		
 		
 }
