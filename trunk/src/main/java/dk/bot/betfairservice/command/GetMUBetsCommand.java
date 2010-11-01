@@ -1,7 +1,13 @@
 package dk.bot.betfairservice.command;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.betfair.publicapi.types.exchange.v5.APIRequestHeader;
 import com.betfair.publicapi.types.exchange.v5.BetStatusEnum;
@@ -32,13 +38,17 @@ public class GetMUBetsCommand implements BFCommand {
 	private GetMUBetsResp resp;
 	private final BetStatusEnum betStatus;
 	private final Integer marketId;
+	private final Date matchedSince;
 
-	public GetMUBetsCommand(BFBetStatus betStatus, Integer marketId) {
+	public GetMUBetsCommand(BFBetStatus betStatus, Integer marketId,
+			Date matchedSince) {
 		this.marketId = marketId;
+		this.matchedSince = matchedSince;
 		this.betStatus = BetStatusEnum.valueOf(betStatus.value());
 	}
 
-	public void execute(BFExchangeService exchangeWebService, BFGlobalService globalWebService, String sessionToken) {
+	public void execute(BFExchangeService exchangeWebService,
+			BFGlobalService globalWebService, String sessionToken) {
 
 		APIRequestHeader requestHeader = new APIRequestHeader();
 		requestHeader.setSessionToken(sessionToken);
@@ -54,6 +64,19 @@ public class GetMUBetsCommand implements BFCommand {
 		req.setStartRecord(0);
 		if (marketId != null) {
 			req.setMarketId(marketId);
+		}
+		if (matchedSince != null) {
+			try {
+				GregorianCalendar matchedSinceCal = (GregorianCalendar) GregorianCalendar
+						.getInstance();
+				matchedSinceCal.setTime(matchedSince);
+				XMLGregorianCalendar xmlMatchedSinceCal = DatatypeFactory.newInstance()
+						.newXMLGregorianCalendar(matchedSinceCal);
+				req.setMatchedSince(xmlMatchedSinceCal);
+			} catch (DatatypeConfigurationException e) {
+				throw new BetFairException(e.getMessage());
+
+			}
 		}
 
 		resp = exchangeWebService.getMUBets(req);
@@ -75,8 +98,8 @@ public class GetMUBetsCommand implements BFCommand {
 
 			if (resp.getBets() != null) {
 
-				List<com.betfair.publicapi.types.exchange.v5.MUBet> mergedBets = BetFairUtil.mergBets(resp.getBets()
-						.getMUBet());
+				List<com.betfair.publicapi.types.exchange.v5.MUBet> mergedBets = BetFairUtil
+						.mergBets(resp.getBets().getMUBet());
 
 				return convertBets(mergedBets);
 
@@ -90,22 +113,28 @@ public class GetMUBetsCommand implements BFCommand {
 	}
 
 	/** Convert CXF generated MUBet to own MUBet model */
-	private List<BFMUBet> convertBets(List<com.betfair.publicapi.types.exchange.v5.MUBet> betFairbets) {
+	private List<BFMUBet> convertBets(
+			List<com.betfair.publicapi.types.exchange.v5.MUBet> betFairbets) {
 
 		List<BFMUBet> muBets = new ArrayList<BFMUBet>(betFairbets.size());
 
 		for (com.betfair.publicapi.types.exchange.v5.MUBet betFairBet : betFairbets) {
 			BFMUBet bet = new BFMUBet();
 			bet.setBetId(betFairBet.getBetId());
-			bet.setBetStatus(BFBetStatus.fromValue(betFairBet.getBetStatus().value()));
+			bet
+					.setBetStatus(BFBetStatus
+							.fromValue(betFairBet.getBetStatus().value()));
 			bet.setBetType(BFBetType.fromValue(betFairBet.getBetType().value()));
-			bet.setBetCategoryType(BFBetCategoryType.fromValue(betFairBet.getBetCategoryType().value()));
+			bet.setBetCategoryType(BFBetCategoryType.fromValue(betFairBet
+					.getBetCategoryType().value()));
 
 			bet.setMarketId(betFairBet.getMarketId());
 			bet.setSelectionId(betFairBet.getSelectionId());
 
-			bet.setPlacedDate(betFairBet.getPlacedDate().toGregorianCalendar().getTime());
-			bet.setMatchedDate(betFairBet.getMatchedDate().toGregorianCalendar().getTime());
+			bet.setPlacedDate(betFairBet.getPlacedDate().toGregorianCalendar()
+					.getTime());
+			bet.setMatchedDate(betFairBet.getMatchedDate().toGregorianCalendar()
+					.getTime());
 
 			bet.setBspLiability(betFairBet.getBspLiability());
 			bet.setSize(betFairBet.getSize());
