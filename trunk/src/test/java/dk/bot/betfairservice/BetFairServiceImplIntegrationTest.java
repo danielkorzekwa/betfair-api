@@ -202,6 +202,15 @@ public class BetFairServiceImplIntegrationTest {
 	public void testGetMUBets() {
 		betFairService.getMUBets(BFBetStatus.MU);
 	}
+	
+	@Test
+	public void testGetMUBet() {
+		List<BFMUBet> muBets = betFairService.getMUBets(BFBetStatus.MU);
+		if(muBets.size()>0) {
+			List<BFMUBet> muBet = betFairService.getMUBet(muBets.get(0).getBetId());
+			assertNotNull(muBet);
+		}
+	}
 
 	@Test
 	public void testGetMUBetsForMarketId() {

@@ -62,6 +62,9 @@ public interface BetFairService {
 	 */
 	public List<BFMUBet> getMUBets(BFBetStatus betStatus);
 	
+	/**Returns all matched and unmatched portions of a bet.*/
+	public List<BFMUBet> getMUBet(long betId);
+	
 	/**
 	 * Returns current bets for a given BetStatus and marketId
 	 * 
