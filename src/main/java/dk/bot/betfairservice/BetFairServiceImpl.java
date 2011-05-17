@@ -20,6 +20,7 @@ import dk.bot.betfairservice.command.CancelBetCommand;
 import dk.bot.betfairservice.command.GetAccountFundsCommand;
 import dk.bot.betfairservice.command.GetAccountStatementCommand;
 import dk.bot.betfairservice.command.GetEventTypesCommand;
+import dk.bot.betfairservice.command.GetMUBetCommand;
 import dk.bot.betfairservice.command.GetMUBetsCommand;
 import dk.bot.betfairservice.command.GetMarketDetailsCommand;
 import dk.bot.betfairservice.command.GetMarketRunnersCommand;
@@ -44,10 +45,10 @@ import dk.bot.betfairservice.model.LoginResponse;
 import dk.bot.betfairservice.state.BetFairState;
 import dk.bot.betfairservice.state.BetFairStateImpl;
 
-
 public class BetFairServiceImpl implements BetFairService {
 
-	private final Log log = LogFactory.getLog(BetFairServiceImpl.class.getSimpleName());
+	private final Log log = LogFactory.getLog(BetFairServiceImpl.class
+			.getSimpleName());
 
 	private final static String BF_RESP_OK = "OK";
 	private final static String BF_RESP_NOSESSION = "NO_SESSION";
@@ -67,8 +68,8 @@ public class BetFairServiceImpl implements BetFairService {
 	 * 
 	 * @param userName
 	 * @param password
-	 * @param productId,
-	 *            e.g. 82 for free api
+	 * @param productId
+	 *            , e.g. 82 for free api
 	 * @throws BetFairException
 	 */
 	public BetFairServiceImpl() {
@@ -121,11 +122,14 @@ public class BetFairServiceImpl implements BetFairService {
 		if (success) {
 			log.info("Login successfull.");
 		} else {
-			log.info("Login error." + "User: " + user + ", ProductId: " + productId + ", apiCode: " + apiStatusCode
-					+ ", loginCode: " + loginStatusCode + ", exception: " + exceptionMessage);
+			log.info("Login error." + "User: " + user + ", ProductId: "
+					+ productId + ", apiCode: " + apiStatusCode
+					+ ", loginCode: " + loginStatusCode + ", exception: "
+					+ exceptionMessage);
 		}
 
-		return new LoginResponse(success, apiStatusCode, loginStatusCode, exceptionMessage);
+		return new LoginResponse(success, apiStatusCode, loginStatusCode,
+				exceptionMessage);
 
 	}
 
@@ -136,37 +140,50 @@ public class BetFairServiceImpl implements BetFairService {
 		return cmd.getEventTypes();
 	}
 
-	public List<BFMarketData> getMarkets(Date fromDate, Date toDate, Set<Integer> eventTypeIds) {
+	public List<BFMarketData> getMarkets(Date fromDate, Date toDate,
+			Set<Integer> eventTypeIds) {
 
-		GetMarketsCommand cmd = new GetMarketsCommand(fromDate, toDate, eventTypeIds);
+		GetMarketsCommand cmd = new GetMarketsCommand(fromDate, toDate,
+				eventTypeIds);
 		execute(cmd, 1);
 		return cmd.getMarkets();
 
 	}
 
-	public BFMarketRunners getMarketRunners(int marketId) throws BetFairException {
+	public BFMarketRunners getMarketRunners(int marketId)
+			throws BetFairException {
 
 		GetMarketRunnersCommand command = new GetMarketRunnersCommand(marketId);
 		execute(command, 1);
 		return command.getMarketRunners();
 	}
 
-	public List<BFMUBet> getMUBets(BFBetStatus betStatus) throws BetFairException {
+	public List<BFMUBet> getMUBets(BFBetStatus betStatus)
+			throws BetFairException {
 
-		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,null,null);
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus, null, null);
 		execute(command, 5);
 		return command.getMUBets();
 
 	}
-	
-	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId) throws BetFairException {
 
-		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,marketId,null);
+	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId)
+			throws BetFairException {
+
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus, marketId,
+				null);
 		execute(command, 1);
 		return command.getMUBets();
 
 	}
-	
+
+	/** Returns all matched and unmatched portions of a bet. */
+	public List<BFMUBet> getMUBet(long betId) {
+		GetMUBetCommand command = new GetMUBetCommand(betId);
+		execute(command, 1);
+		return command.getMUBet();
+	}
+
 	/**
 	 * Returns bets since given time for a given market
 	 * 
@@ -176,22 +193,26 @@ public class BetFairServiceImpl implements BetFairService {
 	 * @return
 	 * @throws BetFairException
 	 */
-	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId, Date matchedSince) {
-		GetMUBetsCommand command = new GetMUBetsCommand(betStatus,marketId,matchedSince);
+	public List<BFMUBet> getMUBets(BFBetStatus betStatus, int marketId,
+			Date matchedSince) {
+		GetMUBetsCommand command = new GetMUBetsCommand(betStatus, marketId,
+				matchedSince);
 		execute(command, 1);
 		return command.getMUBets();
 	}
 
-	public BFMarketDetails getMarketDetails(int marketId) throws BetFairException {
+	public BFMarketDetails getMarketDetails(int marketId)
+			throws BetFairException {
 
 		GetMarketDetailsCommand command = new GetMarketDetailsCommand(marketId);
 		execute(command, 1);
 		return command.getMarketDetails();
 	}
-	
+
 	@Override
 	public BFMarketTradedVolume getMarketTradedVolume(int marketId) {
-		GetMarketTradedVolumeCommand command = new GetMarketTradedVolumeCommand(marketId);
+		GetMarketTradedVolumeCommand command = new GetMarketTradedVolumeCommand(
+				marketId);
 		execute(command, 1);
 		return command.getMarketTradedVolume();
 	}
@@ -203,32 +224,36 @@ public class BetFairServiceImpl implements BetFairService {
 		return command.cancelBet();
 	}
 
-	public BFBetPlaceResult placeBet(int marketId, int selectionId, BFBetType betType, double price, double size,
-			boolean checkTxLimit) {
+	public BFBetPlaceResult placeBet(int marketId, int selectionId,
+			BFBetType betType, double price, double size, boolean checkTxLimit) {
 
 		if (checkTxLimit) {
 			txCounter.waitForPermission(System.currentTimeMillis(), false);
 		}
 
-		PlaceBetCommand command = new PlaceBetCommand(marketId, selectionId, betType, price, size);
+		PlaceBetCommand command = new PlaceBetCommand(marketId, selectionId,
+				betType, price, size);
 		execute(command, 1);
 		return command.placeBet();
 
 	}
 
-	public BFSPBetPlaceResult placeSPBet(int marketId, int selectionId, BFBetType betType, double liability,
-			Double limit) {
+	public BFSPBetPlaceResult placeSPBet(int marketId, int selectionId,
+			BFBetType betType, double liability, Double limit) {
 
 		txCounter.waitForPermission(System.currentTimeMillis(), false);
 
-		PlaceSPBetCommand command = new PlaceSPBetCommand(marketId, selectionId, betType, liability, limit);
+		PlaceSPBetCommand command = new PlaceSPBetCommand(marketId,
+				selectionId, betType, liability, limit);
 		execute(command, 1);
 		return command.placeBet();
 
 	}
 
-	public List<BFAccountStatementItem> getAccountStatement(Date startDate, Date endDate, int recordCount) {
-		GetAccountStatementCommand command = new GetAccountStatementCommand(startDate, endDate, recordCount);
+	public List<BFAccountStatementItem> getAccountStatement(Date startDate,
+			Date endDate, int recordCount) {
+		GetAccountStatementCommand command = new GetAccountStatementCommand(
+				startDate, endDate, recordCount);
 		execute(command, 1);
 		return command.getAccountStatementItems();
 	}
@@ -245,14 +270,17 @@ public class BetFairServiceImpl implements BetFairService {
 	 * @param command
 	 * @param delay
 	 * @param weight
-	 *            Weight of request used to protect against Data requests charge.
+	 *            Weight of request used to protect against Data requests
+	 *            charge.
 	 */
 	private void execute(BFCommand command, int weight) {
 
-		dataRequestCounter.waitForPermission(System.currentTimeMillis(), weight);
+		dataRequestCounter
+				.waitForPermission(System.currentTimeMillis(), weight);
 
 		try {
-			command.execute(exchangeWebService, globalWebService, state.getSessionToken());
+			command.execute(exchangeWebService, globalWebService,
+					state.getSessionToken());
 
 			if (command.getErrorCode().equals(BF_RESP_OK)) {
 				state.setSessionToken(command.getSessionToken());
@@ -271,7 +299,8 @@ public class BetFairServiceImpl implements BetFairService {
 		BetFairServiceInfo info = new BetFairServiceInfo();
 		info.setTxCounterState(txCounter.getState());
 
-		info.setMaxDataRequestPerSecond(dataRequestCounter.getMaxRequestsPerSecond());
+		info.setMaxDataRequestPerSecond(dataRequestCounter
+				.getMaxRequestsPerSecond());
 		info.setLastSecDataRequest(dataRequestCounter.getLastSecRequestsNum());
 
 		return info;
