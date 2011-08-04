@@ -147,7 +147,11 @@ public class GetAccountStatementCommand implements BFCommand {
 			}
 
 			return items;
-		} else {
+		} 
+		else if(resp.getErrorCode().equals(GetAccountStatementErrorEnum.NO_RESULTS)) {
+			return new ArrayList<BFAccountStatementItem>();
+		}
+		else {
 			throw new BetFairException("getAccountStatementItems: " + resp.getErrorCode().name());
 		}
 	}
