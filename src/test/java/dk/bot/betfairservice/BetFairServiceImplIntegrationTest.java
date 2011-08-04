@@ -1,6 +1,7 @@
 package dk.bot.betfairservice;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -149,6 +151,7 @@ public class BetFairServiceImplIntegrationTest {
 		assertTrue("Num of runners < 2", horseRaceRunners.getMarketRunners().size() > 1);
 	}
 
+	@Ignore
 	@Test
 	public void testPlaceBetLayOnExchange() {
 		/** Get market to place bet on */
@@ -164,6 +167,7 @@ public class BetFairServiceImplIntegrationTest {
 	}
 
 	/** Place SP bet limit on close */
+	@Ignore
 	@Test
 	public void testPlaceBetSPBackLoC() {
 		/** Get market to place bet on */
@@ -232,6 +236,7 @@ public class BetFairServiceImplIntegrationTest {
 		System.out.println("Bets matched for market=" + marketId + ",since date:" + muBets);
 	}
 
+	@Ignore
 	@Test
 	public void testGetMUBetsCheckSPBet() {
 		/** Get market to place bet on */
